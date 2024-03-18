@@ -10,6 +10,7 @@ use Auto1\ServiceAPIHandlerBundle\ArgumentResolver\ServiceRequestResolver;
 use Auto1\ServiceAPIHandlerBundle\EventListener\ServiceResponseListener;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -24,6 +25,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ServiceRequestResolverTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var SerializerInterface|DecoderInterface|DenormalizerInterface|ObjectProphecy
      */
@@ -47,7 +50,7 @@ class ServiceRequestResolverTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->serializerProphecy = $this->prophesize(DecodeDenormalizeAwareSerializerInterface::class);
         $this->endpointRegistryProphecy = $this->prophesize(EndpointRegistryInterface::class);
@@ -62,7 +65,7 @@ class ServiceRequestResolverTest extends TestCase
     /**
      * @return void
      */
-    public function testResolveWrongRequestClass()
+    public function testResolveWrongRequestClass(): void
     {
         $generator = $this->serviceRequestResolver->resolve(
             new Request(),
@@ -76,14 +79,14 @@ class ServiceRequestResolverTest extends TestCase
             ->willReturn(\stdClass::class)
             ->shouldBeCalled();
 
-        self::setExpectedException(\LogicException::class);
+        $this->expectException(\LogicException::class);
         $generator->current();
     }
 
     /**
      * @return void
      */
-    public function testResolveDecodeException()
+    public function testResolveDecodeException(): void
     {
         $generator = $this->serviceRequestResolver->resolve(
             new Request([], [], ['baz' => 'qux'], [], [], [], 'foobar'),
@@ -103,14 +106,14 @@ class ServiceRequestResolverTest extends TestCase
             ->willThrow(UnexpectedValueException::class)
             ->shouldBeCalled();
 
-        self::setExpectedException(BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
         $generator->current();
     }
 
     /**
      * @return void
      */
-    public function testResolveDeserializationException()
+    public function testResolveDeserializationException(): void
     {
         $generator = $this->serviceRequestResolver->resolve(
             new Request([], [], ['baz' => 'qux'], [], [], [], 'foobar'),
@@ -138,14 +141,14 @@ class ServiceRequestResolverTest extends TestCase
             ->willThrow(NotNormalizableValueException::class)
             ->shouldBeCalled();
 
-        self::setExpectedException(BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
         $generator->current();
     }
 
     /**
      * @return void
      */
-    public function testResolve()
+    public function testResolve(): void
     {
         $generator = $this->serviceRequestResolver->resolve(
             new Request([], [], ['baz' => 'qux'], [], [], [], 'foobar'),
@@ -182,7 +185,7 @@ class ServiceRequestResolverTest extends TestCase
      * @param bool             $expectedResult
      * @return void
      */
-    public function testSupports(ArgumentMetadata $argumentMetadata, bool $expectedResult)
+    public function testSupports(ArgumentMetadata $argumentMetadata, bool $expectedResult): void
     {
         self::assertSame($expectedResult, $this->serviceRequestResolver->supports(new Request(), $argumentMetadata));
     }

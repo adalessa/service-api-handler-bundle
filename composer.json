@@ -25,10 +25,17 @@
   },
   "require-dev": {
     "symfony/console": "~3.0|~4.0|~5.0|~6.0",
-    "phpunit/phpunit": "^4.8",
+    "phpunit/phpunit": "^9.0",
     "symfony/phpunit-bridge": "^3.3.8",
-    "phpspec/prophecy": "^1.7.2"
+    "phpspec/prophecy": "^1.7.2",
+    "phpspec/prophecy-phpunit": "^2.2"
   },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git@github.com:adalessa/service-api-components-bundle.git"
+    }
+  ],
   "suggest": {
       "nelmio/api-doc-bundle": "For Generating API documentations"
   },
